@@ -1,0 +1,4 @@
+1|Haircut|300.0|1|Hair Stylist/Barber|true
+2|Shave|150.0|1|Barber|true
+3|Facial|800.0|1|Beautician|true
+4|Hair Colour|1500.0|2|Hair Stylist|true
