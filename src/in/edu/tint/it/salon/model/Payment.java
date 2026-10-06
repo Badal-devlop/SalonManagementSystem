@@ -1,15 +1,20 @@
-package salon;
+package in.edu.tint.it.salon.model;
 
-/** Payment record linked to one booking. */
+/**
+ * POJO / JavaBean representing a payment record linked to a booking.
+ */
 public class Payment {
     public enum Status { PAID, REFUNDED }
 
-    private final int id;
-    private final int bookingId;
-    private final int customerId;
-    private final double amount;
-    private final String method;
+    private int id;
+    private int bookingId;
+    private int customerId;
+    private double amount;
+    private String method;
     private Status status;
+
+    public Payment() {
+    }
 
     public Payment(int id, int bookingId, int customerId, double amount, String method, Status status) {
         this.id = id;
@@ -21,10 +26,20 @@ public class Payment {
     }
 
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public int getBookingId() { return bookingId; }
+    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+
     public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+
     public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+
     public String getMethod() { return method; }
+    public void setMethod(String method) { this.method = method; }
+
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 

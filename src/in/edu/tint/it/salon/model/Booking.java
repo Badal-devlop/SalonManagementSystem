@@ -1,19 +1,24 @@
-package salon;
+package in.edu.tint.it.salon.model;
 
 import java.time.LocalDate;
 
-/** One appointment made by a customer. */
+/**
+ * POJO / JavaBean representing an appointment booking made by a customer.
+ */
 public class Booking {
     public enum Status { BOOKED, COMPLETED, CANCELLED }
 
-    private final int id;
-    private final int customerId;
-    private final int staffId;
-    private final int serviceId;
-    private final LocalDate date;
-    private final int hour;
+    private int id;
+    private int customerId;
+    private int staffId;
+    private int serviceId;
+    private LocalDate date;
+    private int hour;
     private Status status;
-    private final double price;
+    private double price;
+
+    public Booking() {
+    }
 
     public Booking(int id, int customerId, int staffId, int serviceId,
                    LocalDate date, int hour, Status status, double price) {
@@ -28,14 +33,28 @@ public class Booking {
     }
 
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+
     public int getStaffId() { return staffId; }
+    public void setStaffId(int staffId) { this.staffId = staffId; }
+
     public int getServiceId() { return serviceId; }
+    public void setServiceId(int serviceId) { this.serviceId = serviceId; }
+
     public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
+
     public int getHour() { return hour; }
+    public void setHour(int hour) { this.hour = hour; }
+
     public Status getStatus() { return status; }
-    public double getPrice() { return price; }
     public void setStatus(Status status) { this.status = status; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
     public String toLine() {
         return id + "|" + customerId + "|" + staffId + "|" + serviceId + "|" + date + "|" + hour + "|" + status + "|" + price;
