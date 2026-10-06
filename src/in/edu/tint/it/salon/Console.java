@@ -1,10 +1,13 @@
-package salon;
+package in.edu.tint.it.salon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-/** Small helper for reading validated input from the keyboard. */
+/**
+ * Legacy console helper maintained for backward compatibility.
+ * The primary user interface of the Salon Management System is now Java Swing.
+ */
 public final class Console {
     private static final Scanner IN = new Scanner(System.in);
 

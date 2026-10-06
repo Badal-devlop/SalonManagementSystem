@@ -1,98 +1,72 @@
-# Salon Management System 1.0
+# Salon Management System 2.0 (Swing Edition)
 
-Console-based Java application for managing customers, staff, services, appointments and payments.
+Desktop Java Swing application with MVC architecture for managing salon customers, staff, services, appointments, payments, and invoices. Developed for Techno International New Town (TINT), Department of Information Technology.
 
 ## Requirements
 
-- JDK 11 or newer
-- No external libraries
+- JDK 11 or newer (JDK 21 compatible)
+- No external libraries or frameworks required (uses standard Java SE & Swing)
 
-## Run on Windows PowerShell
+## Package & Architecture
 
-Open the terminal in the project root (the folder containing `src`).
+- **Root Package**: `in.edu.tint.it.salon`
+- **Architecture**: MVC (Model - View - Controller / Manager)
+  - **Model (`model`)**: JavaBean / POJO domain entities (`Person`, `Customer`, `Staff`, `Admin`, `ServiceItem`, `Booking`, `Payment`).
+  - **Interfaces (`interfaces`)**: Role-based contracts (`CustomerInt4Salon`, `StaffInt4Salon`, `AdminInt4Salon`).
+  - **Managers (`manager`)**: Business logic & collection management with thread-safe `Vector<T>` (`CustomerManager`, `StaffManager`, `AdminManager`, `ServiceManager`, `BookingManager`, `PaymentManager`).
+  - **View (`view`)**: Java Swing GUI screens (`LoginFrame`, `CustomerFrame`, `StaffFrame`, `AdminFrame`, `CustomerRegistrationDialog`, `InvoiceDialog`, `UIUtils`).
+  - **Persistence**: Text file persistence in `data/` (`admins.txt`, `staff.txt`, `customers.txt`, `services.txt`, `bookings.txt`, `payments.txt`).
 
-```powershell
-javac -d .\out (Get-ChildItem -Path .\src\salon -Filter *.java | ForEach-Object { $_.FullName })
-java -cp .\out salon.SalonApp
+## How to Run
+
+### Windows Batch File
+Double click or execute `run.bat` from the project root:
+```cmd
+run.bat
 ```
 
-If your terminal is one folder above the project, first run:
-
+### Windows PowerShell
+From the project root:
 ```powershell
-cd .\SalonManagementSystem
+if (-not (Test-Path out)) { New-Item -ItemType Directory -Path out }
+$sources = (Get-ChildItem -Path src -Filter *.java -Recurse | ForEach-Object { $_.FullName })
+javac -d out $sources
+java -cp out in.edu.tint.it.salon.SalonApp
 ```
 
-## Default demo accounts
+## Default Demo Accounts
 
-| Role | Username | Password |
-|---|---|---|
-| Admin | admin | admin123 |
-| Staff | staff1 | staff123 |
-| Staff | staff2 | staff123 |
-| Staff | staff3 | staff123 |
+| Role | Portal Selection | Username | Password |
+|---|---|---|---|
+| Admin | Admin | admin | admin123 |
+| Staff (Hair Stylist) | Staff | staff1 | staff123 |
+| Staff (Barber) | Staff | staff2 | staff123 |
+| Staff (Beautician) | Staff | staff3 | staff123 |
 
-Customers register themselves from the start screen.
+*Customers can register new accounts directly from the login screen or use existing accounts.*
 
-Staff accounts are created by the Admin. Admin accounts are seeded by the application rather than publicly registered.
+## Key Features
 
-## Main features
+- **Customer Portal**:
+  - Registration with input validations (10-digit phone, unique username, secure password).
+  - Browse available services with pricing, duration, and specialization details.
+  - Interactive appointment booking with automatic slot availability filtering (10:00 to 18:00).
+  - Staff selection filtered by service qualification.
+  - Demo payment via UPI, Card, or Cash.
+  - Real-time invoice generation and printing.
+  - Booking cancellation with automatic payment refunding.
+  - Profile details & password management.
 
-### Customer
-- Register and log in
-- View active services and prices
-- Book a service with an eligible staff member
-- See available time slots
-- Make a demo payment using UPI, Card or Cash
-- View and cancel bookings
-- View payment history
-- Edit name/phone
-- Change password
+- **Staff Workspace**:
+  - View assigned upcoming appointments.
+  - Mark appointments as completed (validated against scheduled end time).
+  - View completed work history and revenue handled.
+  - Staff account security and password change.
 
-### Staff
-- Log in
-- View upcoming appointments
-- Complete an appointment only after its scheduled end time
-- View completed work
-- Change password
-
-### Admin
-- Manage services
-- Add, edit, deactivate and reactivate services
-- Set service price, duration and required specialization
-- Manage staff
-- Add, deactivate and reactivate staff
-- View customers
-- View all bookings
-- View all payments
-- Revenue report
-- Change password
-
-## Business rules in 1.0
-
-- A staff member cannot be double-booked.
-- Multi-hour services block all overlapping hourly slots.
-- Booking slots are available from 10:00 to 18:00, with the last start time depending on service duration.
-- Bookings can be made up to 30 days ahead.
-- A customer cannot choose staff whose specialization does not match the service.
-- A booking stores its original price and duration, so later service edits do not change old bookings.
-- Customers cannot cancel an appointment that has already started.
-- Cancelled paid bookings are marked as refunded in the demo payment record.
-- Staff cannot mark an appointment completed until its end time has passed.
-- Staff/Admin are not publicly registered.
-- Passwords are stored as SHA-256 hashes.
-- Data is stored locally in a `data` folder.
-
-## Data files
-
-The application creates:
-
-- `admins.txt`
-- `staff.txt`
-- `customers.txt`
-- `services.txt`
-- `bookings.txt`
-- `payments.txt`
-
-## Version
-
-**1.0**
+- **Admin Console**:
+  - Service management (Add, Edit, Deactivate, Reactivate).
+  - Staff management (Add, Deactivate with booking protection, Reactivate).
+  - View registered customers and detailed salon-wide bookings.
+  - View transaction & payment logs.
+  - Revenue analytics and staff performance reporting.
+  - Administrator password management.

@@ -1,5 +1,6 @@
-package salon;
+package in.edu.tint.it.salon;
 
+import in.edu.tint.it.salon.model.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,22 +9,26 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/** Keeps records in memory and saves them as text files in the data folder. */
+/**
+ * Text-file persistence layer for the Salon Management System.
+ * Maintains thread-safe Vector collections matching the instructor's architecture.
+ */
 public class DataStore {
     public static final int OPEN_HOUR = 10;
     public static final int CLOSE_HOUR = 18; // last start is 17:00 for a 1-hour service
 
     private static final Path DIR = Paths.get("data");
 
-    public final List<Admin> admins = new ArrayList<>();
-    public final List<Staff> staff = new ArrayList<>();
-    public final List<Customer> customers = new ArrayList<>();
-    public final List<ServiceItem> services = new ArrayList<>();
-    public final List<Booking> bookings = new ArrayList<>();
-    public final List<Payment> payments = new ArrayList<>();
+    public final Vector<Admin> admins = new Vector<>();
+    public final Vector<Staff> staff = new Vector<>();
+    public final Vector<Customer> customers = new Vector<>();
+    public final Vector<ServiceItem> services = new Vector<>();
+    public final Vector<Booking> bookings = new Vector<>();
+    public final Vector<Payment> payments = new Vector<>();
 
     public DataStore() {
         load();
@@ -65,9 +70,14 @@ public class DataStore {
         return null;
     }
 
+    public Customer customerById(int id) {
+        for (Customer c : customers) if (c.getId() == id) return c;
+        return null;
+    }
+
     public String customerName(int id) {
-        for (Customer c : customers) if (c.getId() == id) return c.getName();
-        return "(unknown)";
+        Customer c = customerById(id);
+        return c == null ? "(unknown)" : c.getName();
     }
 
     public String staffName(int id) {
@@ -85,6 +95,7 @@ public class DataStore {
     }
 
     public List<Staff> eligibleStaff(ServiceItem service) {
+        if (service == null) return new ArrayList<>();
         return activeStaff().stream().filter(service::canBePerformedBy).collect(Collectors.toList());
     }
 
@@ -116,7 +127,7 @@ public class DataStore {
         return free;
     }
 
-    public void save() {
+    public synchronized void save() {
         try {
             Files.createDirectories(DIR);
             write("admins.txt", admins, Admin::toLine);
@@ -126,11 +137,11 @@ public class DataStore {
             write("bookings.txt", bookings, Booking::toLine);
             write("payments.txt", payments, Payment::toLine);
         } catch (IOException e) {
-            System.out.println("Warning: could not save data (" + e.getMessage() + ")");
+            System.err.println("Warning: could not save data (" + e.getMessage() + ")");
         }
     }
 
-    private void load() {
+    private synchronized void load() {
         try {
             read("admins.txt", admins, Admin::fromLine);
             read("staff.txt", staff, Staff::fromLine);
@@ -139,7 +150,7 @@ public class DataStore {
             read("bookings.txt", bookings, Booking::fromLine);
             read("payments.txt", payments, Payment::fromLine);
         } catch (IOException | RuntimeException e) {
-            System.out.println("Warning: could not read saved data (" + e.getMessage() + ")");
+            System.err.println("Warning: could not read saved data (" + e.getMessage() + ")");
         }
     }
 
@@ -177,7 +188,6 @@ public class DataStore {
         if (changed) save();
     }
 
-    /** Adds a paid payment for old bookings if a previous version had no payment file. */
     private void repairMissingPayments() {
         boolean changed = false;
         for (Booking b : bookings) {
